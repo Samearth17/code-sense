@@ -1,0 +1,320 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AI-powered code analysis, debugging, and rectification tool">
+  <meta name="theme-color" content="#030712">
+  <title>AI Code Rectifier</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <div class="app-wrapper">
+    <!-- ===== TOP NAVBAR ===== -->
+    <header class="navbar" id="header">
+      <div class="navbar-container">
+        <div class="logo-group">
+          <div class="logo-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"/>
+              <polyline points="8 6 2 12 8 18"/>
+            </svg>
+          </div>
+          <span class="logo-text">AI Code Rectifier</span>
+          <span class="badge badge-beta">Beta</span>
+        </div>
+        
+        <!-- ===== TAB BAR ===== -->
+        <nav class="tab-bar" id="tab-bar" role="tablist" aria-label="Main navigation">
+          <button class="tab-btn active" id="tab-btn-analysis" role="tab" aria-selected="true" aria-controls="panel-analysis" data-tab="analysis">
+            Code Analysis
+          </button>
+          <button class="tab-btn" id="tab-btn-upload" role="tab" aria-selected="false" aria-controls="panel-upload" data-tab="upload">
+            File Upload
+          </button>
+          <button class="tab-btn" id="tab-btn-github" role="tab" aria-selected="false" aria-controls="panel-github" data-tab="github">
+            GitHub Analyzer
+          </button>
+          <button class="tab-btn" id="tab-btn-detector" role="tab" aria-selected="false" aria-controls="panel-detector" data-tab="detector">
+            AI Detector
+          </button>
+          <div class="tab-indicator" id="tab-indicator" aria-hidden="true"></div>
+        </nav>
+      </div>
+    </header>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content">
+      <div class="container">
+        <div class="tab-panels" id="tab-panels">
+
+          <!-- ── Panel 1: Code Analysis ── -->
+          <section class="tab-panel active" id="panel-analysis" role="tabpanel" aria-labelledby="tab-btn-analysis">
+            <div class="split-layout">
+              <!-- Input Panel -->
+              <div class="panel-card">
+                <div class="panel-header">
+                  <div class="panel-header-title">
+                    <span class="status-indicator"></span>
+                    <h2>Source Code</h2>
+                  </div>
+                  <div class="language-select-wrapper">
+                    <label for="analysis-language" class="sr-only">Language</label>
+                    <select id="analysis-language" class="language-select">
+                      <option value="python">Python</option>
+                      <option value="javascript">JavaScript</option>
+                      <option value="typescript">TypeScript</option>
+                      <option value="java">Java</option>
+                      <option value="cpp">C++</option>
+                      <option value="c">C</option>
+                      <option value="go">Go</option>
+                      <option value="ruby">Ruby</option>
+                      <option value="rust">Rust</option>
+                      <option value="php">PHP</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="editor-outer">
+                  <div class="code-editor-wrapper">
+                    <div class="line-numbers" id="analysis-line-numbers" aria-hidden="true">1</div>
+                    <textarea
+                      id="code-input"
+                      class="code-editor"
+                      placeholder="Paste your source code snippet here..."
+                      spellcheck="false"
+                      aria-label="Code input for analysis"
+                    ></textarea>
+                  </div>
+                </div>
+                <div class="panel-footer-actions">
+                  <button id="analyze-btn" class="btn btn-primary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    <span>Run Analysis</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Results Panel -->
+              <div class="panel-card results-panel" id="analysis-results">
+                <div class="panel-header">
+                  <div class="panel-header-title">
+                    <h2>Output</h2>
+                  </div>
+                </div>
+                <div class="results-content" id="analysis-results-content">
+                  <div class="empty-state">
+                    <div class="empty-state-icon" aria-hidden="true">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                        <line x1="12" y1="22.08" x2="12" y2="12"/>
+                      </svg>
+                    </div>
+                    <p class="empty-state-text">Provide input code and click <strong>Run Analysis</strong> to review bugs.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ── Panel 2: File Upload ── -->
+          <section class="tab-panel" id="panel-upload" role="tabpanel" aria-labelledby="tab-btn-upload" hidden>
+            <div class="upload-layout">
+              <!-- Upload Zone -->
+              <div class="panel-card upload-card">
+                <div class="panel-header">
+                  <div class="panel-header-title">
+                    <h2>Upload Source File</h2>
+                  </div>
+                </div>
+                <div class="upload-zone" id="upload-zone" role="button" tabindex="0" aria-label="File upload area, click or drag and drop">
+                  <input type="file" id="file-input" class="file-input-hidden" accept=".py,.js,.ts,.java,.cpp,.c,.go,.rb,.rs,.php" aria-label="Choose file">
+                  <div class="upload-zone-content">
+                    <div class="upload-icon" aria-hidden="true">
+                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="17 8 12 3 7 8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                      </svg>
+                    </div>
+                    <p class="upload-text">Drag &amp; drop file here, or <span class="upload-browse">browse files</span></p>
+                    <p class="upload-subtext">Supports .py, .js, .ts, .java, .cpp, .c, .go, .rb, .rs, .php (Max 1MB)</p>
+                    <div class="upload-formats">
+                      <span class="format-badge">Python</span>
+                      <span class="format-badge">JavaScript</span>
+                      <span class="format-badge">TypeScript</span>
+                      <span class="format-badge">Java</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="upload-file-info" id="upload-file-info" hidden>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <span id="upload-filename"></span>
+                </div>
+              </div>
+
+              <!-- Upload Results -->
+              <div class="panel-card results-panel" id="upload-results">
+                <div class="panel-header">
+                  <div class="panel-header-title">
+                    <h2>Output</h2>
+                  </div>
+                </div>
+                <div class="results-content" id="upload-results-content">
+                  <div class="empty-state">
+                    <div class="empty-state-icon" aria-hidden="true">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="17 8 12 3 7 8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                      </svg>
+                    </div>
+                    <p class="empty-state-text">Select or drop a file to automatically trigger code analysis.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ── Panel 3: GitHub Analyzer ── -->
+          <section class="tab-panel" id="panel-github" role="tabpanel" aria-labelledby="tab-btn-github" hidden>
+            <div class="github-layout">
+              <!-- GitHub Input -->
+              <div class="panel-card github-input-card">
+                <div class="panel-header">
+                  <div class="panel-header-title">
+                    <h2>Scan Remote Repository</h2>
+                  </div>
+                </div>
+                <div class="github-input-group">
+                  <div class="input-wrapper">
+                    <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                    <input
+                      type="url"
+                      id="github-url"
+                      class="text-input"
+                      placeholder="https://github.com/username/repository"
+                      aria-label="GitHub repository URL"
+                    >
+                  </div>
+                  <button id="github-scan-btn" class="btn btn-primary">
+                    <span>Scan Codebase</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- GitHub Results -->
+              <div class="panel-card results-panel" id="github-results">
+                <div class="panel-header">
+                  <div class="panel-header-title">
+                    <h2>Scanned Source Files</h2>
+                  </div>
+                  <span class="file-count-badge" id="github-file-count" hidden>0 files</span>
+                </div>
+                <div class="results-content" id="github-results-content">
+                  <div class="empty-state">
+                    <div class="empty-state-icon" aria-hidden="true">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                      </svg>
+                    </div>
+                    <p class="empty-state-text">Enter a repository URL above to list files and analyze bugs recursively.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ── Panel 4: AI Detector ── -->
+          <section class="tab-panel" id="panel-detector" role="tabpanel" aria-labelledby="tab-btn-detector" hidden>
+            <div class="split-layout">
+              <!-- Input Panel -->
+              <div class="panel-card">
+                <div class="panel-header">
+                  <div class="panel-header-title">
+                    <span class="status-indicator"></span>
+                    <h2>Source Code</h2>
+                  </div>
+                  <div class="language-select-wrapper">
+                    <label for="detector-language" class="sr-only">Language</label>
+                    <select id="detector-language" class="language-select">
+                      <option value="python">Python</option>
+                      <option value="javascript">JavaScript</option>
+                      <option value="typescript">TypeScript</option>
+                      <option value="java">Java</option>
+                      <option value="cpp">C++</option>
+                      <option value="c">C</option>
+                      <option value="go">Go</option>
+                      <option value="ruby">Ruby</option>
+                      <option value="rust">Rust</option>
+                      <option value="php">PHP</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="editor-outer">
+                  <div class="code-editor-wrapper">
+                    <div class="line-numbers" id="detector-line-numbers" aria-hidden="true">1</div>
+                    <textarea
+                      id="detector-code-input"
+                      class="code-editor"
+                      placeholder="Paste code snippet to run origin classification..."
+                      spellcheck="false"
+                      aria-label="Code input for AI detection"
+                    ></textarea>
+                  </div>
+                </div>
+                <div class="panel-footer-actions">
+                  <button id="detect-btn" class="btn btn-primary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                    <span>Analyze Code Origin</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Results Panel -->
+              <div class="panel-card results-panel" id="detector-results">
+                <div class="panel-header">
+                  <div class="panel-header-title">
+                    <h2>Classification Output</h2>
+                  </div>
+                </div>
+                <div class="results-content" id="detector-results-content">
+                  <div class="empty-state">
+                    <div class="empty-state-icon" aria-hidden="true">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                      </svg>
+                    </div>
+                    <p class="empty-state-text">Paste code and click <strong>Analyze Code Origin</strong> to predict authorship.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer" id="footer">
+      <div class="footer-container">
+        <p class="footer-text">&copy; 2026 AI Code Rectifier. Clean Sandbox Code Sandbox Utility.</p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Toast container -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <script src="{% static 'js/app.js' %}"></script>
+</body>
+</html>
